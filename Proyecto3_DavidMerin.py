@@ -128,13 +128,13 @@ print(filtrar_mascotas(mascotas))
 
 """10. Escribe una función que reciba una lista de números y calcule su promedio. Si la lista está vacía, lanza una
 excepción personalizada y maneja el error adecuadamente."""
-class lista_vacia_error(Exception):
+class ListaVaciaError(Exception):
     pass
 
 
 def calcular_promedio(lista_numeros):
     if len(lista_numeros) == 0:
-        raise lista_vacia_error("La lista está vacía, no se puede calcular el promedio.")
+        raise ListaVaciaError("La lista está vacía, no se puede calcular el promedio.")
 
     promedio = sum(lista_numeros) / len(lista_numeros)
     return promedio
@@ -144,7 +144,7 @@ try:
     numeros = [7, 8, 9]
     print("Promedio:", calcular_promedio(numeros))
 
-except lista_vacia_error as e:
+except ListaVaciaError as e:
     print("Error:", e)
 
 """11. Escribe un programa que pida al usuario que introduzca su edad. Si el usuario ingresa un valor no numérico o un
@@ -284,8 +284,6 @@ valor = 4
 print(calculo_cubo(valor))
 
 """"22. Dada una lista numérica, obtén el producto total de los valores de dicha lista.Usa la función reduce() ."""
-from functools import reduce
-
 def producto_total(lista_numeros):
     resultado = reduce(lambda acumulado, numero: acumulado * numero, lista_numeros)
     return resultado
@@ -298,7 +296,7 @@ print(producto_total(cantidades))
 from functools import reduce
 
 def concatenar_palabras(lista_palabras):
-    resultado = reduce(lambda acumulado, palabra: acumulado + " " + palabra, lista_palabras)
+    resultado = reduce(lambda acumulado, palabra: acumulado + " " + palabra, lista_palabras, "").strip()
     return resultado
 
 
@@ -504,8 +502,11 @@ class UsuarioBanco:
     def transferir_dinero(self, otro_usuario, cantidad):
         if not self.tiene_cuenta or not otro_usuario.tiene_cuenta:
             raise ValueError("Ambos usuarios deben tener cuenta corriente.")
-        if cantidad > otro_usuario.saldo:
-            raise ValueError("El usuario origen no tiene saldo suficiente.")
+        if cantidad > self.saldo:
+            raise ValueError("Saldo insuficiente para transferir.")
+
+self.saldo -= cantidad
+otro_usuario.saldo += cantidad
 
         otro_usuario.saldo -= cantidad
         self.saldo += cantidad
@@ -653,9 +654,10 @@ def calcular_area(figura, datos):
     else:
         raise ValueError("Figura no válida.")
 
-    print(f"El área del {figura} es: {area:.2f}") #le he añadido este print para que no apareciera directamente el área calculada
     return area
 
+area = calcular_area("rectangulo", (10, 5))
+print(f"El área del rectángulo es: {area:.2f}")
 
 calcular_area("rectangulo", (10, 5))
 calcular_area("circulo", (7,))
@@ -683,7 +685,7 @@ try:
 
         if codigo in cupones:
             descuento = cupones[codigo]
-            precio_final = precio_original - descuento
+            precio_final = precio_original * (1 - descuento / 100)
 
             if precio_final < 0:
                 precio_final = 0
